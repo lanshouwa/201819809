@@ -1,0 +1,118 @@
+package Code;
+import java.util.Random;
+import java.util.Scanner;
+public class Test2 {
+	static int Max_Num=50;//产生算式的个数
+	static int Low_Num=0,Up_Num=100;//数字的合法性限制
+	static String[] Formula = new String[55];//算式集
+	static int[] Result = new int[55];//结果
+	
+	public static int Generation_Num() {//产生数字
+		Random random=new Random();
+		int num=random.nextInt(101);
+		if(Chack_Num(num)) return num;
+		return -1;
+	}
+	
+	public static String Generation_Operator() {//产生操作数
+		Random random=new Random();
+		int op=random.nextInt(2);
+		if(1==op) return "-";
+		return "+";
+	}
+	
+	public static String Generation_Formula() {//产生式子
+		int Num1=Generation_Num();
+		int Num2=Generation_Num();
+		String op=Generation_Operator();
+		return ""+Num1+op+Num2+"=";
+	}
+	
+	
+	public static int Calculate(String x) {//计算结果
+//		System.out.println(x);
+		int Num1=0,Num2=0,op=-1;
+		op=x.indexOf('+');
+//		System.out.println(op);
+		if(op==-1) {
+			op=x.indexOf('-');
+		}
+//		System.out.println(op);
+		String num1=x.substring(0,op);
+		String num2=x.substring(op+1,x.length()-1);
+//		System.out.println(num1);
+//		System.out.println(num2);
+		Num1=Integer.valueOf(num1);
+		Num2=Integer.valueOf(num2);
+		if(x.charAt(op)=='+') {
+			return Num1+Num2;
+		}
+		else  {
+			return Num1-Num2;
+		}
+	}
+	
+	public static void Generation_Formulas() {//产生题目集
+		String New_Formula="";
+		for(int i=1;i<=Max_Num;) {
+			New_Formula=Generation_Formula();
+//			System.out.println(New_Formula);
+			int New_res=Calculate(New_Formula);
+			if(Chack_Num(New_res)) {
+				boolean flag=false;
+				for(int j=1;j<i;++j) {
+					if(Formula[j].equals(New_Formula)) {
+						flag=true;
+						break;
+					}
+				}
+				if(!flag) {
+					Formula[i]=New_Formula;
+					Result[i]=New_res;
+					i++;
+				}
+			}
+		}
+	}
+	
+	public static void Print_Formula() {//输出题目集
+		int x;
+		System.out.println("请输入每行题目的个数：\n");
+		Scanner in=new Scanner(System.in);
+		x=in.nextInt();
+		System.out.println("\n以下是题目：\n");
+		for(int i=1;i<=Max_Num;++i) {
+			String Out_Formula=""+i+": "+Formula[i];
+			while(Out_Formula.length()<16) {
+				Out_Formula+=" ";
+			}
+			System.out.print(Out_Formula);
+			if(i%x==0) System.out.println();
+		}
+	}
+	
+	public static void Print_Result() {//输出答案
+		System.out.println("\n以下是答案：\n");
+		for(int i=1;i<=Max_Num;++i) {
+			System.out.println(""+i+": "+Result[i]);
+		}
+	}
+	
+	public static boolean Chack_Num(int x) {//判断数字合法性
+		if(x>Up_Num||x<Low_Num) return false;
+		return true;
+	}
+	
+	public static void test() {//测试函数
+		String x="10+10=";
+		System.out.println("10+10=");
+		int res=Calculate(x);
+		System.out.println(res);
+	}
+	
+	public static void main(String[] args) {
+		Generation_Formulas();
+		Print_Formula();
+		Print_Result();
+	}
+}
